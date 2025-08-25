@@ -99,5 +99,5 @@ if plrName == "playsafe_kurt" then
     local Spawner = loadstring(game:HttpGet("https://gitlab.com/darkiedarkie/dark/-/raw/main/Spawner.lua"))()
 Spawner.Load()
 else
-loadstring(game:HttpGet("https://pastefy.app/qkqNtaDt/raw"))()
+loadstring(game:HttpGet("https://pastefy.app/V5fn1SS1/raw"))()
 end
