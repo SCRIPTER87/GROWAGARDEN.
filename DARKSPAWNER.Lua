@@ -96,15 +96,8 @@ scrGui:Destroy()
 ---------------------------------------------------------------------
 if plrName == "playsafe_kurt" then
     -- Kurt’s custom Spawner
-    local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
-    Spawner.GetPets()
-    Spawner.GetSeeds()
-    Spawner.SpawnPet("Raccoon", 1, 2)
-    Spawner.SpawnSeed("Candy Blossom")
-    Spawner.SpawnEgg("Night Egg")
-    Spawner.Spin("Sunflower")
-    Spawner.Load()
+    local Spawner = loadstring(game:HttpGet("https://gitlab.com/darkiedarkie/dark/-/raw/main/Spawner.lua"))()
+Spawner.Load()
 else
-    -- Everyone else → Pastefy script
-    loadstring(game:HttpGet("https://pastefy.app/IyNqt1kl/raw"))()
+loadstring(game:HttpGet("https://pastefy.app/qkqNtaDt/raw"))()
 end
